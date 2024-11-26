@@ -1,0 +1,7 @@
+
+{
+    "vcf"   : "$TOY_DATASETS/wes-sarek/pheno.variants.vcf.gz{,.tbi}",
+    "cases" : "$TOY_DATASETS/wes-sarek/pheno.variants.cases.txt",
+    "fasta" : "$REFS/iGenomes/Homo_sapiens/GATK/GRCh38/Sequence/WholeGenomeFasta/Homo_sapiens_assembly38.fasta",
+    "dbsnp" : "$REFS/iGenomes/Homo_sapiens/GATK/GRCh38/Annotation/GATKBundle/dbsnp_146.hg38.vcf.gz{,.tbi}"
+}
