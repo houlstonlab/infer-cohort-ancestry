@@ -7,6 +7,7 @@ include { SUBSET }  from './modules/subset.nf'
 include { UPDATE }  from './modules/update.nf'
 include { FILTER }  from './modules/filter.nf'
 include { CONVERT } from './modules/convert.nf'
+include { RELATE } from './modules/relate.nf'
 include { PRUNE }   from './modules/prune.nf'
 include { MERGE }   from './modules/merge.nf'
 include { PCA }     from './modules/pca.nf'
@@ -62,4 +63,7 @@ workflow {
         | combine(populations_id)
         | combine(populations_info)
         | PLOT
+
+    // Calculate relationship matrix
+    CONVERT.out | RELATE
 }
