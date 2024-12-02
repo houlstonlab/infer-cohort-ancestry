@@ -28,6 +28,7 @@ process PRUNE {
     plink --bfile ${bim.baseName} \
         --exclude range ${ld_regions} \
         --indep-pairwise ${params.window} ${params.step} ${params.rsquared} \
+        --rel-cutoff ${params.relatedness} \
         --const-fid 0 \
         --out plink_tmp
     
