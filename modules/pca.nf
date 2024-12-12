@@ -9,9 +9,7 @@ process PCA {
 
     input:
     tuple val(ref), val(cohort),
-          path(ref_snps), path(cohort_snps), path(ref_cohort_snps),
-          path(bim), path(bed), path(fam),
-          path(nosex), path(log), 
+          path(bim), path(bed), path(fam), path(nosex), path(log), 
           val(mode), path(populations), path(clusters)
 
     output:

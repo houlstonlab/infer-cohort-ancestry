@@ -13,15 +13,14 @@ process RELATE {
 
     output:
     tuple val(cohort), val(type),
-          path("${cohort}.${type}.rel"),
-          path("${cohort}.${type}.rel.id")
+          path("${cohort}.${type}.genome")
 
     script:
     """
     #!/bin/bash
     plink \
         --bfile ${bim.baseName} \
-        --make-rel square \
+        --genome \
         --out ${cohort}.${type}
     """
 }

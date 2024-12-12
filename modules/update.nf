@@ -1,5 +1,5 @@
 process UPDATE {
-    tag "${cohort}:${type}"
+    tag "${cohort}:${type}:${chrom}"
 
     label 'simple'
 
@@ -8,14 +8,14 @@ process UPDATE {
     publishDir("${params.output_dir}/updated", mode: 'copy')
 
     input:
-    tuple val(cohort), val(type),
+    tuple val(cohort), val(type), val(chrom),
           path(vcf_in), path(index_in), 
           val(dbsnp), path(dbsnp_in), path(dbsnp_index)
 
     output:
-    tuple val(cohort), val(type),
-          path("${cohort}.${type}.updated.vcf.gz"),
-          path("${cohort}.${type}.updated.vcf.gz.tbi")
+    tuple val(cohort), val(type), val(chrom),
+          path("${cohort}.${type}.${chrom}.updated.vcf.gz"),
+          path("${cohort}.${type}.${chrom}.updated.vcf.gz.tbi")
      
     script:
     """
@@ -25,8 +25,8 @@ process UPDATE {
         -c ID \
         ${vcf_in} \
         --threads ${task.cpu} \
-        -Oz -o ${cohort}.${type}.updated.vcf.gz
+        -Oz -o ${cohort}.${type}.${chrom}.updated.vcf.gz
     
-    tabix ${cohort}.${type}.updated.vcf.gz
+    tabix ${cohort}.${type}.${chrom}.updated.vcf.gz
     """
 }

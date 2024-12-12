@@ -1,5 +1,5 @@
 process FILTER {
-    tag "${cohort}:${type}"
+    tag "${cohort}:${type}:${chrom}"
 
     label 'simple'
 
@@ -8,13 +8,13 @@ process FILTER {
     publishDir("${params.output_dir}/filtered", mode: 'copy')
 
     input:
-    tuple val(cohort), val(type),
+    tuple val(cohort), val(type), val(chrom),
           path(vcf_in), path(index_in) 
 
     output:
-    tuple val(cohort), val(type),
-          path("${cohort}.${type}.filtered.vcf.gz"),
-          path("${cohort}.${type}.filtered.vcf.gz.tbi")
+    tuple val(cohort), val(type), val(chrom),
+          path("${cohort}.${type}.${chrom}.filtered.vcf.gz"),
+          path("${cohort}.${type}.${chrom}.filtered.vcf.gz.tbi")
 
     script:
     """
@@ -24,8 +24,8 @@ process FILTER {
     bcftools norm -d none | \
     bcftools view -m2 -M2 | \
     bcftools filter -i 'AF > ${params.AF} && HWE > ${params.HWE} && F_MISSING < ${params.F_MISSING}' | \
-    bcftools view --threads ${task.cpu} -Oz -o ${cohort}.${type}.filtered.vcf.gz
+    bcftools view --threads ${task.cpu} -Oz -o ${cohort}.${type}.${chrom}.filtered.vcf.gz
 
-    tabix ${cohort}.${type}.filtered.vcf.gz
+    tabix ${cohort}.${type}.${chrom}.filtered.vcf.gz
     """
 }

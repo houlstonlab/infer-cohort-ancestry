@@ -1,5 +1,5 @@
 process CONVERT {
-    tag "${cohort}:${type}"
+    tag "${cohort}:${type}:${chrom}"
 
     label 'simple'
 
@@ -8,16 +8,16 @@ process CONVERT {
     publishDir("${params.output_dir}/plinked", mode: 'copy')
 
     input:
-    tuple val(cohort), val(type),
+    tuple val(cohort), val(type), val(chrom),
           path(vcf_in), path(index_in)
 
     output:
-    tuple val(cohort), val(type),
-          path("${cohort}.${type}.bim"),
-          path("${cohort}.${type}.bed"),
-          path("${cohort}.${type}.fam"),
-          path("${cohort}.${type}.nosex"),
-          path("${cohort}.${type}.log")
+    tuple val(cohort), val(type), val(chrom),
+          path("${cohort}.${type}.${chrom}.bim"),
+          path("${cohort}.${type}.${chrom}.bed"),
+          path("${cohort}.${type}.${chrom}.fam"),
+          path("${cohort}.${type}.${chrom}.nosex"),
+          path("${cohort}.${type}.${chrom}.log")
 
     script:
     """
@@ -26,6 +26,6 @@ process CONVERT {
         --vcf ${vcf_in} \
         --make-bed \
         --const-fid 0 \
-        --out ${cohort}.${type}
+        --out ${cohort}.${type}.${chrom}
     """
 }

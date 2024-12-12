@@ -1,5 +1,5 @@
 process PRUNE {
-    tag "${cohort}:${type}"
+    tag "${cohort}:${type}:${chrom}"
 
     label 'simple'
 
@@ -8,19 +8,19 @@ process PRUNE {
     publishDir("${params.output_dir}/pruned", mode: 'copy')
 
     input:
-    tuple val(cohort), val(type),
+    tuple val(cohort), val(type), val(chrom),
           path(bim), path(bed), path(fam), path(nosex), path(log),
           path(ld_regions)
           
     output:
-    tuple val(cohort), val(type),
-          path("${cohort}.${type}.prune.bim"),
-          path("${cohort}.${type}.prune.bed"),
-          path("${cohort}.${type}.prune.fam"),
-          path("${cohort}.${type}.prune.nosex"),
-          path("${cohort}.${type}.prune.in"),
-          path("${cohort}.${type}.prune.out"),
-          path("${cohort}.${type}.prune.log")
+    tuple val(cohort), val(type), val(chrom),
+          path("${cohort}.${type}.${chrom}.prune.bim"),
+          path("${cohort}.${type}.${chrom}.prune.bed"),
+          path("${cohort}.${type}.${chrom}.prune.fam"),
+          path("${cohort}.${type}.${chrom}.prune.nosex"),
+          path("${cohort}.${type}.${chrom}.prune.in"),
+          path("${cohort}.${type}.${chrom}.prune.out"),
+          path("${cohort}.${type}.${chrom}.prune.log")
 
     script:
     """
@@ -28,7 +28,6 @@ process PRUNE {
     plink --bfile ${bim.baseName} \
         --exclude range ${ld_regions} \
         --indep-pairwise ${params.window} ${params.step} ${params.rsquared} \
-        --rel-cutoff ${params.relatedness} \
         --const-fid 0 \
         --out plink_tmp
     
@@ -36,10 +35,10 @@ process PRUNE {
         --extract plink_tmp.prune.in \
         --make-bed \
         --const-fid 0 \
-        --out ${cohort}.${type}.prune
+        --out ${cohort}.${type}.${chrom}.prune
     
     # Explicitly rename output files
-    mv plink_tmp.prune.in ${cohort}.${type}.prune.in
-    mv plink_tmp.prune.out ${cohort}.${type}.prune.out
+    mv plink_tmp.prune.in ${cohort}.${type}.${chrom}.prune.in
+    mv plink_tmp.prune.out ${cohort}.${type}.${chrom}.prune.out
     """
 }
