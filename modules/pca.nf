@@ -16,7 +16,9 @@ process PCA {
     tuple val(ref), val(cohort), val(mode),
           path("${ref}.${cohort}.${mode}.variants.txt"),
           path("${ref}.${cohort}.${mode}.eigenvec"),
-          path("${ref}.${cohort}.${mode}.eigenval")
+          path("${ref}.${cohort}.${mode}.eigenval"),
+          path("${ref}.${cohort}.${mode}.clst"),
+          path("${ref}.${cohort}.${mode}.log")
 
     script:
     if (mode == 'clusters') {
@@ -31,8 +33,8 @@ process PCA {
         plink --bfile ${bim.baseName} \
             --extract ${ref}.${cohort}.${mode}.variants.txt \
             --pca \
-            --within ${clusters} \
-            --pca-clusters ${populations} \
+            --pca-clusters ${clusters} \
+            --within ${populations} \
             --write-cluster \
             --out ${ref}.${cohort}.${mode}
         """
@@ -49,6 +51,7 @@ process PCA {
             --extract ${ref}.${cohort}.${mode}.variants.txt \
             --pca \
             --out ${ref}.${cohort}.${mode}
+        touch ${ref}.${cohort}.${mode}.clst
         """
     } else {
         throw new Exception("Unknown mode: ${mode}")
