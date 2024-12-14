@@ -9,7 +9,7 @@ process PLOT {
 
     input:
     tuple val(ref), val(cohort), val(mode),
-          path(eigenvec), path(eigenval),
+          path(variants), path(eigenvec), path(eigenval),
           path(ids), path(info)
     
     output:
