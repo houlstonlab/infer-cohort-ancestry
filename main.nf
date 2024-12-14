@@ -6,9 +6,8 @@ nextflow.enable.dsl=2
 include { COORDINATES } from './modules/coordinates.nf'
 include { SUBSET }      from './modules/subset.nf'
 include { UPDATE }      from './modules/update.nf'
-include { FILTER }      from './modules/filter.nf'
+include { FIX }         from './modules/fix.nf'
 include { CONVERT }     from './modules/convert.nf'
-include { RELATE }      from './modules/relate.nf'
 include { PRUNE }       from './modules/prune.nf'
 include { COMBINE }     from './modules/combine.nf'
 include { MERGE }       from './modules/merge.nf'
@@ -16,9 +15,7 @@ include { PCA }         from './modules/pca.nf'
 include { PLOT }        from './modules/plot.nf'
 
 // Define input channels
-// TODO: Add rest of chroms
-chroms_ch =  Channel.of (1)
-// chroms_ch =  Channel.of (1..22, 'X', 'Y')
+chroms_ch =  Channel.of (1..22)
 
 variants_ch = Channel.fromFilePairs(params.vcf, flat: true)
 cases_ch = Channel.fromPath(params.cases)
@@ -29,19 +26,14 @@ cohorts_info_ch = Channel.fromPath(params.cohorts_info)
     | map { row -> [ row.cohort, row.type, row.size ] }
 
 // Reference files
-dbsnp       = Channel.fromFilePairs(params.dbsnp, flat: true)
-fasta       = Channel.fromFilePairs(params.fasta, flat: true)
-ld_regions  = Channel.fromPath(params.ld_regions)
-
+dbsnp               = Channel.fromFilePairs(params.dbsnp, flat: true)
+fasta               = Channel.fromFilePairs(params.fasta, flat: true)
+ld_regions          = Channel.fromPath(params.ld_regions)
 populations         = Channel.fromPath(params.populations)
 populations_id      = Channel.fromPath(params.populations_id)
 populations_info    = Channel.fromPath(params.populations_info)
-
-clusters    = Channel.fromPath(params.clusters)
-
-// TODO: Fix Error: Too few samples specified by --pca-cluster-names/--pca-clusters.
-// TODO: Add as a parameter
-modes       = Channel.of('clusters', 'noclusters')
+clusters            = Channel.fromPath(params.clusters)
+modes_ch            = Channel.of(params.modes.split(','))
 
 // worflow
 workflow {
@@ -54,25 +46,20 @@ workflow {
         | set { coordinates }
 
     // Subset, update, filter, convert, and prune
-    // TODO: Optimize SUBSET and UPDATE
-    // TODO: Filter the plinked files
     variants_ch 
         | combine(cohorts_info_ch, by: 0) 
         | combine(cases_ch, by: 0) 
-        | combine(fasta)
         | combine(coordinates)
         | SUBSET
         | combine(dbsnp)
         | UPDATE
-        | FILTER
+        | combine(fasta)
+        | FIX
         | CONVERT
         | combine(ld_regions)
         | PRUNE
         | groupTuple(by: [0,1])
         | COMBINE
-        // | RELATE
-
-    COMBINE.out
         | branch {
             ref     : it[1] == 'references'
             cohort  : it[1] == 'cases'
@@ -83,7 +70,7 @@ workflow {
     snps.cohort
         | combine(snps.ref)
         | MERGE
-        | combine(modes)
+        | combine(modes_ch)
         | combine(populations)
         | combine(clusters)
         | PCA

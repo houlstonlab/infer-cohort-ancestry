@@ -16,6 +16,6 @@ process COORDINATES {
     script:
     """
     #!/bin/bash
-    bcftools query -r chr${chrom},${chrom} -f '%CHROM\t%POS\n' ${vcf} > ${key}.${chrom}.snps.txt
+    bcftools query -r chr${chrom} -f '%CHROM\t%POS\n' ${vcf} | uniq > ${key}.${chrom}.snps.txt
     """
 }

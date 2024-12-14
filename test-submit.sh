@@ -41,7 +41,7 @@ module load Nextflow
 # nextflow run houlstonlab/infer-cohort-ancestry -r main \
 nextflow run ../main.nf \
     --output_dir ./results/ \
-    -profile local,gha \
+    -profile local,test \
     -resume
 
 # usage: nextflow run [ local_dir/main.nf | git_url ]  

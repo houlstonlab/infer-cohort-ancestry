@@ -22,6 +22,9 @@ process PCA {
         """
         #!/bin/bash
         plink --bfile ${bim.baseName} \
+            --maf ${params.AF} \
+            --hwe ${params.HWE} \
+            --mind ${params.F_MISSING} \
             --pca \
             --within ${clusters} \
             --pca-clusters ${populations} \
@@ -32,6 +35,9 @@ process PCA {
         """
         #!/bin/bash
         plink --bfile ${bim.baseName} \
+            --maf ${params.AF} \
+            --hwe ${params.HWE} \
+            --mind ${params.F_MISSING} \
             --pca \
             --out ${ref}.${cohort}.${mode}
         """

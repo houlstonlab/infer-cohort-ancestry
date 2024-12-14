@@ -24,9 +24,19 @@ process MERGE {
     script:
     """
     #!/bin/bash
-    # Merge the reference and cohort files, keeping only the intersection variants
+    # Attempt to merge and identify problematic SNPs
     plink --bfile ${ref_bim.baseName} \
         --bmerge ${cohort_bed} ${cohort_bim} ${cohort_fam} \
+        --merge-mode 6 \
+        --out merge_attempt || true
+    
+    # Remove problematic SNPs from both datasets
+    plink --bfile ${ref_bim.baseName} --exclude merge_attempt.missnp --make-bed --out ref_cleaned
+    plink --bfile ${cohort_bim.baseName} --exclude merge_attempt.missnp --make-bed --out cases_cleaned
+
+    # Attempt to merge with removing problematic SNPs
+    plink --bfile ref_cleaned \
+        --bmerge cases_cleaned.bed cases_cleaned.bim cases_cleaned.fam \
         --make-bed \
         --out ${ref}.${cohort}
     """

@@ -22,10 +22,12 @@ process CONVERT {
     script:
     """
     #!/bin/bash
+    echo '.' > tmp.exclude
     plink \
         --vcf ${vcf_in} \
         --make-bed \
         --const-fid 0 \
+        --exclude tmp.exclude \
         --out ${cohort}.${type}.${chrom}
     """
 }
