@@ -38,6 +38,9 @@ process MERGE {
     plink --bfile ref_cleaned \
         --bmerge cases_cleaned.bed cases_cleaned.bim cases_cleaned.fam \
         --make-bed \
+        --maf ${params.AF} \
+        --hwe ${params.HWE} \
+        --mind ${params.F_MISSING} \
         --out ${ref}.${cohort}
     """
 }
