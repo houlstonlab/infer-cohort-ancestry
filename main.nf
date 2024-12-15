@@ -17,22 +17,18 @@ include { PLOT }        from './modules/plot.nf'
 // Define input channels
 chroms_ch =  Channel.of (1..22)
 
-variants_ch = Channel.fromFilePairs(params.vcf, flat: true)
-cases_ch = Channel.fromPath(params.cases)
+variants_ch     = Channel.fromFilePairs(params.vcf, flat: true)
+population_ch   = Channel.fromPath(params.population)
     | map { [it.simpleName, it] }
 
 cohorts_info_ch = Channel.fromPath(params.cohorts_info)
     | splitCsv(header: true, sep: ',')
     | map { row -> [ row.cohort, row.type, row.size ] }
 
-// Reference files
 dbsnp               = Channel.fromFilePairs(params.dbsnp, flat: true)
 fasta               = Channel.fromFilePairs(params.fasta, flat: true)
 ld_regions          = Channel.fromPath(params.ld_regions)
-populations         = Channel.fromPath(params.populations)
-populations_id      = Channel.fromPath(params.populations_id)
-populations_info    = Channel.fromPath(params.populations_info)
-clusters            = Channel.fromPath(params.clusters)
+
 modes_ch            = Channel.of(params.modes.split(','))
 
 // worflow
@@ -48,7 +44,7 @@ workflow {
     // Subset, update, filter, convert, and prune
     variants_ch 
         | combine(cohorts_info_ch, by: 0) 
-        | combine(cases_ch, by: 0) 
+        | combine(population_ch, by: 0) 
         | combine(coordinates)
         | SUBSET
         | combine(dbsnp)
@@ -59,6 +55,7 @@ workflow {
         | combine(ld_regions)
         | PRUNE
         | groupTuple(by: [0,1])
+        | combine(population_ch, by: 0) 
         | COMBINE
         | branch {
             ref     : it[1] == 'references'
@@ -71,10 +68,6 @@ workflow {
         | combine(snps.ref)
         | MERGE
         | combine(modes_ch)
-        | combine(populations)
-        | combine(clusters)
         | PCA
-        | combine(populations_id)
-        | combine(populations_info)
         | PLOT
 }

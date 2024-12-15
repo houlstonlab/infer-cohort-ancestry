@@ -8,8 +8,7 @@ cohort  <- args[2]
 mode    <- args[3]
 eigenvec<- args[4]
 eigenval<- args[5]
-ids     <- args[6]
-info    <- args[7]
+pop     <- args[6]
 
 # Load data
 eigen_vec <- readr::read_delim(
@@ -17,18 +16,10 @@ eigen_vec <- readr::read_delim(
     col_names = c('FID', 'IID', paste0('PC', 1:20))
 )
 
-pop_id <- readr::read_tsv(ids)
-pop_id <- dplyr::mutate(pop_id, FID = 0)
-
-populations <- readr::read_tsv(info)
-populations <- dplyr::select(
-    populations,
-    Pop = `Population Code`,
-    superpop = `Super Population`
-)
+populations <- read.table(pop, header = FALSE)
+names(populations) <- c('FID', 'IID', 'pop', 'superpop')
       
-pcs <- dplyr::left_join(eigen_vec, pop_id)
-pcs <- dplyr::left_join(pcs, populations)
+pcs <- dplyr::left_join(eigen_vec, populations)
 
 # Plot
 pca_plot <- (

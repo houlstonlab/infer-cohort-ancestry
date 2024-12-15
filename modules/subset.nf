@@ -20,8 +20,14 @@ process SUBSET {
     script:
     """
     #!/bin/bash
+    # Extract cases
+    cat ${cases} | awk '{ print \$2 }' | uniq > cases.txt
+
+    # Extract coordinates
     cat ${coordinates} | sort | uniq -c | awk '{ if(\$1 > 2) print \$2"\t"\$3}' > regions.txt
-    bcftools view -S ${cases} -R regions.txt ${vcf_in} | \
+    
+    # Extract SNPs
+    bcftools view -S cases.txt -R regions.txt ${vcf_in} | \
     bcftools norm -d none | \
     bcftools view -v snps -m2 -M2 | \
     bcftools view --threads ${task.cpu} -Oz -o ${cohort}.${type}.${chrom}.snps.vcf.gz

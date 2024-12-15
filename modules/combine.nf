@@ -9,7 +9,7 @@ process COMBINE {
 
     input:
     tuple val(cohort), val(type), val(chrom),
-          path(bim), path(bed), path(fam), path(nosex), path(in), path(out), path(log)
+          path(bim), path(bed), path(fam), path(nosex), path(in), path(out), path(log), path(pop)
 
     output:
     tuple val(cohort), val(type),
@@ -17,11 +17,15 @@ process COMBINE {
           path("${cohort}.${type}.bed"),
           path("${cohort}.${type}.fam"),
           path("${cohort}.${type}.nosex"),
-          path("${cohort}.${type}.log")
+          path("${cohort}.${type}.log"),
+          path("${cohort}.${type}.pop")
 
     script:
     """
     #!/bin/bash
+    # Return population file 
+    cp ${pop} ${cohort}.${type}.pop
+    
     # Create a list of all files
     echo "${bed.join('\n')}" > bed.txt
     echo "${bim.join('\n')}" > bim.txt

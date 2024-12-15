@@ -13,27 +13,12 @@ cd test/
 # # Download test data
 # URL="https://figshare.com/ndownloader/files"
 
-# wget -c $URL/50487621 -O input/pheno.variants.vcf.gz
-# wget -c $URL/50487624 -O input/pheno.variants.vcf.gz.tbi
-# wget -c $URL/50385591 -O input/pheno.cases.txt
-# wget -c $URL/50810508 -O input/cohorts_info.csv
+# wget -c $URL/51198488 -O input/vcf-ancestry.tar.gz
 
-# wget -c $URL/50791842 -O input/dbsnp.146.vcf.gz
-# wget -c $URL/50791845 -O input/dbsnp.146.vcf.gz.tbi
-
-# wget -c $URL/50793063 -O input/assembly38.fasta
-# wget -c $URL/50793066 -O input/assembly38.fasta.fai
-# wget -c $URL/50812212 -O input/ld_regions.txt
-
-# wget -c $URL/50813238 -O input/populations.txt
-# wget -c $URL/50813415 -O input/populations_id.txt
-# wget -c $URL/50813337 -O input/populations_info.txt
-# wget -c $URL/50813235 -O input/clusters.txt
-
-# # Copy as reference files
-# cp input/pheno.variants.vcf.gz input/ref.variants.vcf.gz
-# cp input/pheno.variants.vcf.gz.tbi input/ref.variants.vcf.gz.tbi
-# cp input/pheno.cases.txt input/ref.cases.txt
+# # Unzip the files
+# tar -xzvf input/vcf-ancestry.tar.gz -C input/
+# cp /data/reference-data/iGenomes/Homo_sapiens/GATK/GRCh38/Sequence/WholeGenomeFasta/Homo_sapiens_assembly38.fasta test/input/assembly38.fasta
+# cp /data/reference-data/iGenomes/Homo_sapiens/GATK/GRCh38/Sequence/WholeGenomeFasta/Homo_sapiens_assembly38.fasta.fai test/input/assembly38.fasta.fai 
 
 # Run nextflow
 module load Nextflow
