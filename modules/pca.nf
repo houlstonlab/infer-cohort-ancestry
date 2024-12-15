@@ -27,8 +27,8 @@ process PCA {
         #!/bin/bash
         cat ${pop} > ${ref}.${cohort}.${mode}.pop
         cat ${pop} | awk '{ print \$1, \$2, \$3}' > populations.txt
-        cat ${pop} | awk '{if (\$3 != 'NA'); print \$3}' | sort -u > clusters.txt
-           
+        cat ${pop} | awk '{ print \$3}' | sort -u | grep -v "NA" > clusters.txt
+
         # Select random variants
         RANDOM=42; shuf -n ${params.N_VARS} ${bim} | \
         cut -f 2 \

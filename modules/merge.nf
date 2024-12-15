@@ -27,14 +27,15 @@ process MERGE {
     #!/bin/bash
     # Return population file
     cat ${ref_pop} ${cohort_pop} > ${ref}.${cohort}.pop
-
+    cat ${ref}.${cohort}.pop | awk '{ print "0", \$2, \$1, \$2}' > famids.txt
+    
     # Attempt to merge and identify problematic SNPs
     plink --bfile ${ref_bim.baseName} \
         --bmerge ${cohort_bed} ${cohort_bim} ${cohort_fam} \
         --merge-mode 6 \
         --out merge_attempt || true
     
-    if [ -f merge_attempt-merge.missnp ]; then
+    if [ -f merge_attempt.missnp ]; then
         # Remove problematic SNPs from both datasets
         plink --bfile ${ref_bim.baseName} --exclude merge_attempt.missnp --make-bed --out ref_cleaned
         plink --bfile ${cohort_bim.baseName} --exclude merge_attempt.missnp --make-bed --out cases_cleaned
@@ -43,6 +44,7 @@ process MERGE {
         plink --bfile ref_cleaned \
             --bmerge cases_cleaned.bed cases_cleaned.bim cases_cleaned.fam \
             --make-bed \
+            --update-ids famids.txt \
             --maf ${params.AF} \
             --hwe ${params.HWE} \
             --mind ${params.F_MISSING} \
@@ -51,6 +53,7 @@ process MERGE {
         plink --bfile ${ref_bim.baseName} \
             --bmerge ${cohort_bed} ${cohort_bim} ${cohort_fam} \
             --make-bed \
+            --update-ids famids.txt \
             --maf ${params.AF} \
             --hwe ${params.HWE} \
             --mind ${params.F_MISSING} \
