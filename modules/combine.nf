@@ -25,7 +25,8 @@ process COMBINE {
     #!/bin/bash
     # Return population file 
     cp ${pop} ${cohort}.${type}.pop
-    
+    cat ${pop} | awk '{ print "0", \$2, \$1, \$2}' > famids.txt
+
     # Create a list of all files
     echo "${bed.join('\n')}" > bed.txt
     echo "${bim.join('\n')}" > bim.txt
@@ -34,7 +35,7 @@ process COMBINE {
 
     plink \
         --make-bed \
-        --nonfounders \
+        --update-ids famids.txt \
         --merge-list allfiles.txt \
         --out ${cohort}.${type}
     """

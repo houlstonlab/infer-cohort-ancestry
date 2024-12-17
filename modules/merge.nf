@@ -27,7 +27,6 @@ process MERGE {
     #!/bin/bash
     # Return population file
     cat ${ref_pop} ${cohort_pop} > ${ref}.${cohort}.pop
-    cat ${ref}.${cohort}.pop | awk '{ print "0", \$2, \$1, \$2}' > famids.txt
     
     # Attempt to merge and identify problematic SNPs
     plink --bfile ${ref_bim.baseName} \
@@ -44,19 +43,11 @@ process MERGE {
         plink --bfile ref_cleaned \
             --bmerge cases_cleaned.bed cases_cleaned.bim cases_cleaned.fam \
             --make-bed \
-            --update-ids famids.txt \
-            --maf ${params.AF} \
-            --hwe ${params.HWE} \
-            --mind ${params.F_MISSING} \
             --out ${ref}.${cohort}
     else
         plink --bfile ${ref_bim.baseName} \
             --bmerge ${cohort_bed} ${cohort_bim} ${cohort_fam} \
             --make-bed \
-            --update-ids famids.txt \
-            --maf ${params.AF} \
-            --hwe ${params.HWE} \
-            --mind ${params.F_MISSING} \
             --out ${ref}.${cohort}
     fi
     """

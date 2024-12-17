@@ -31,7 +31,8 @@ process PCA {
 
         # Select random variants
         RANDOM=42; shuf -n ${params.N_VARS} ${bim} | \
-        cut -f 2 \
+        cut -f 2 | \
+        uniq \
         > ${ref}.${cohort}.${mode}.variants.txt
         
         # Perform PCA
@@ -41,6 +42,10 @@ process PCA {
             --pca-clusters clusters.txt \
             --within populations.txt \
             --write-cluster \
+            --maf ${params.AF} \
+            --hwe ${params.HWE} \
+            --geno ${params.F_MISSING} \
+            --mind ${params.F_MISSING} \
             --out ${ref}.${cohort}.${mode}
         """
     } else if (mode == 'noclusters') {
@@ -55,6 +60,10 @@ process PCA {
         plink --bfile ${bim.baseName} \
             --extract ${ref}.${cohort}.${mode}.variants.txt \
             --pca \
+            --maf ${params.AF} \
+            --hwe ${params.HWE} \
+            --geno ${params.F_MISSING} \
+            --mind ${params.F_MISSING} \
             --out ${ref}.${cohort}.${mode}
                 
         cat ${pop} > ${ref}.${cohort}.${mode}.pop
