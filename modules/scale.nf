@@ -29,7 +29,7 @@ process SCALE {
         
         # Perform PCA with clusters
         plink --bfile ${bim.baseName} \
-            --pca \
+            --pca ${params.N_DIMS} \
             --pca-clusters clusters.txt \
             --within populations.txt \
             --write-cluster \
@@ -45,7 +45,7 @@ process SCALE {
 
         # Perform PCA with no clusters
         plink --bfile ${bim.baseName} \
-            --pca \
+            --pca ${params.N_DIMS} \
             --out ${ref}.${cohort}.${mode}
         
         cp ${ref}.${cohort}.${mode}.eigenvec ${ref}.${cohort}.${mode}.txt
@@ -64,7 +64,7 @@ process SCALE {
         plink --bfile ${bim.baseName} \
             --read-genome ${ref}.${cohort}.${mode}.genome \
             --cluster \
-            --mds-plot 2 \
+            --mds-plot ${params.N_DIMS} \
             --out ${ref}.${cohort}.${mode}
 
         cat ${ref}.${cohort}.${mode}.mds | tail -n +2 | awk '{print \$1,\$2,\$3,\$4,\$5}' > ${ref}.${cohort}.${mode}.txt

@@ -18,6 +18,6 @@ process PLOT {
     script:
     """
     #!/bin/bash
-    plot_pca.R ${ref} ${cohort} ${mode} ${file} ${pop}
+    plot_pca.R ${ref} ${cohort} ${mode} ${file} ${pop} ${params.N_DIMS}
     """
 }

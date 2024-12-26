@@ -8,6 +8,7 @@ cohort  <- args[2]
 mode    <- args[3]
 scaled  <- args[4]
 pop     <- args[5]
+dims    <- args[6]
 
 # Load population data
 populations <- read.table(pop, header = FALSE)
@@ -15,9 +16,9 @@ names(populations) <- c('FID', 'IID', 'pop', 'superpop')
 
 # Load scaled data
 if ( mode == 'mds' ) {
-    col_names <- c('FID', 'IID','SOL', paste0('D', 1:2))
+    col_names <- c('FID', 'IID','SOL', paste0('D', 1:as.integer(dims)))
 } else {
-    col_names <- c('FID', 'IID', paste0('D', 1:20))
+    col_names <- c('FID', 'IID', paste0('D', 1:as.integer(dims)))
 }
 scaled_dims <- readr::read_delim(scaled, col_names = col_names)
 scaled_dims <- dplyr::left_join(scaled_dims, populations)
