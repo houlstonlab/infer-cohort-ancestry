@@ -28,7 +28,7 @@ pca_plot <- (
     ggplot2::ggplot(scaled_dims) +
     ggplot2::geom_point(
         data = dplyr::filter(scaled_dims, !is.na(color)),
-        ggplot2::aes(x = D2, y = D1, color = as.factor(color)),
+        ggplot2::aes(x = D1, y = D2, color = as.factor(color)),
         size = .5, alpha = .5
     ) +
     ggplot2::geom_point(
