@@ -9,8 +9,7 @@ process PLOT {
 
     input:
     tuple val(ref), val(cohort), val(mode),
-          path(variants), path(eigenvec), path(eigenval),
-          path(clust), path(log), path(pop)
+          path(file), path(log), path(pop)
     
     output:
     tuple val(ref), val(cohort), val(mode),
@@ -19,6 +18,6 @@ process PLOT {
     script:
     """
     #!/bin/bash
-    plot_pca.R ${ref} ${cohort} ${mode} ${eigenvec} ${eigenval} ${pop}
+    plot_pca.R ${ref} ${cohort} ${mode} ${file} ${pop}
     """
 }

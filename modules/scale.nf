@@ -1,11 +1,11 @@
-process PCA {
+process SCALE {
     tag "${ref}:${cohort}:${mode}"
 
     label 'simple'
 
     container = params.plink
 
-    publishDir("${params.output_dir}/pca", mode: 'copy')
+    publishDir("${params.output_dir}/scaled", mode: 'copy')
 
     input:
     tuple val(ref), val(cohort),
@@ -14,10 +14,7 @@ process PCA {
 
     output:
     tuple val(ref), val(cohort), val(mode),
-          path("${ref}.${cohort}.${mode}.variants.txt"),
-          path("${ref}.${cohort}.${mode}.eigenvec"),
-          path("${ref}.${cohort}.${mode}.eigenval"),
-          path("${ref}.${cohort}.${mode}.clst"),
+          path("${ref}.${cohort}.${mode}.txt"),
           path("${ref}.${cohort}.${mode}.log"),
           path("${ref}.${cohort}.${mode}.pop")
 
@@ -25,49 +22,52 @@ process PCA {
     if (mode == 'clusters') {
         """
         #!/bin/bash
+        # Return population file, and extract clusters
         cat ${pop} > ${ref}.${cohort}.${mode}.pop
         cat ${pop} | awk '{ print \$1, \$2, \$3}' > populations.txt
         cat ${pop} | awk '{ print \$3}' | sort -u | grep -v "NA" > clusters.txt
-
-        # Select random variants
-        RANDOM=42; shuf -n ${params.N_VARS} ${bim} | \
-        cut -f 2 | \
-        uniq \
-        > ${ref}.${cohort}.${mode}.variants.txt
         
-        # Perform PCA
+        # Perform PCA with clusters
         plink --bfile ${bim.baseName} \
-            --extract ${ref}.${cohort}.${mode}.variants.txt \
             --pca \
             --pca-clusters clusters.txt \
             --within populations.txt \
             --write-cluster \
-            --maf ${params.AF} \
-            --hwe ${params.HWE} \
-            --geno ${params.F_MISSING} \
-            --mind ${params.F_MISSING} \
             --out ${ref}.${cohort}.${mode}
+        
+        cp ${ref}.${cohort}.${mode}.eigenvec ${ref}.${cohort}.${mode}.txt
         """
     } else if (mode == 'noclusters') {
         """
-        #!/bin/bash
-        # Select random variants
-        RANDOM=42; shuf -n ${params.N_VARS} ${bim} | \
-        cut -f 2 \
-        > ${ref}.${cohort}.${mode}.variants.txt
-        
-        # Perform PCA
-        plink --bfile ${bim.baseName} \
-            --extract ${ref}.${cohort}.${mode}.variants.txt \
-            --pca \
-            --maf ${params.AF} \
-            --hwe ${params.HWE} \
-            --geno ${params.F_MISSING} \
-            --mind ${params.F_MISSING} \
-            --out ${ref}.${cohort}.${mode}
-                
+        #!/bin/bash        
+        # Return population file
         cat ${pop} > ${ref}.${cohort}.${mode}.pop
-        touch ${ref}.${cohort}.${mode}.clst
+
+        # Perform PCA with no clusters
+        plink --bfile ${bim.baseName} \
+            --pca \
+            --out ${ref}.${cohort}.${mode}
+        
+        cp ${ref}.${cohort}.${mode}.eigenvec ${ref}.${cohort}.${mode}.txt
+        """
+    } else if (mode == 'mds') {
+        """
+        #!/bin/bash
+        # Return population file
+        cat ${pop} > ${ref}.${cohort}.${mode}.pop
+
+        # Perform MDS
+        plink --bfile ${bim.baseName} \
+            --genome \
+            --out ${ref}.${cohort}.${mode}
+        
+        plink --bfile ${bim.baseName} \
+            --read-genome ${ref}.${cohort}.${mode}.genome \
+            --cluster \
+            --mds-plot 2 \
+            --out ${ref}.${cohort}.${mode}
+
+        cat ${ref}.${cohort}.${mode}.mds | tail -n +2 | awk '{print \$1,\$2,\$3,\$4,\$5}' > ${ref}.${cohort}.${mode}.txt
         """
     } else {
         throw new Exception("Unknown mode: ${mode}")

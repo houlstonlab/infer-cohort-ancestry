@@ -6,32 +6,34 @@ args <- commandArgs(trailingOnly = TRUE)
 ref     <- args[1]
 cohort  <- args[2]
 mode    <- args[3]
-eigenvec<- args[4]
-eigenval<- args[5]
-pop     <- args[6]
+scaled  <- args[4]
+pop     <- args[5]
 
-# Load data
-eigen_vec <- readr::read_delim(
-    eigenvec,
-    col_names = c('FID', 'IID', paste0('PC', 1:20))
-)
-
+# Load population data
 populations <- read.table(pop, header = FALSE)
 names(populations) <- c('FID', 'IID', 'pop', 'superpop')
-      
-pcs <- dplyr::left_join(eigen_vec, populations)
+
+# Load scaled data
+if ( mode == 'mds' ) {
+    col_names <- c('FID', 'IID','SOL', paste0('D', 1:2))
+} else {
+    col_names <- c('FID', 'IID', paste0('D', 1:20))
+}
+scaled_dims <- readr::read_delim(scaled, col_names = col_names)
+scaled_dims <- dplyr::left_join(scaled_dims, populations)
+scaled_dims <- dplyr::mutate(scaled_dims, color = superpop)
 
 # Plot
 pca_plot <- (
-    ggplot2::ggplot(pcs) +
+    ggplot2::ggplot(scaled_dims) +
     ggplot2::geom_point(
-        data = dplyr::filter(pcs, !is.na(superpop)),
-        ggplot2::aes(x = PC1, y = PC2, color = superpop),
+        data = dplyr::filter(scaled_dims, !is.na(color)),
+        ggplot2::aes(x = D2, y = D1, color = as.factor(color)),
         size = .5, alpha = .5
     ) +
     ggplot2::geom_point(
-        data = dplyr::filter(pcs, is.na(superpop)),
-        ggplot2::aes(x = PC1, y = PC2),
+        data = dplyr::filter(scaled_dims, is.na(color)),
+        ggplot2::aes(x = D1, y = D2),
         shape = 3, alpha = .5
     ) +
     ggplot2::labs(color = '') +

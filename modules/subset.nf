@@ -30,6 +30,7 @@ process SUBSET {
     bcftools view -S cases.txt -R regions.txt ${vcf_in} | \
     bcftools norm -d none | \
     bcftools view -v snps -m2 -M2 | \
+    bcftools +setGT -- -t . -n 0 | \
     bcftools view --threads ${task.cpu} -Oz -o ${cohort}.${type}.${chrom}.snps.vcf.gz
     tabix ${cohort}.${type}.${chrom}.snps.vcf.gz
     """

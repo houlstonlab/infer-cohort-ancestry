@@ -11,7 +11,8 @@ include { CONVERT }     from './modules/convert.nf'
 include { PRUNE }       from './modules/prune.nf'
 include { COMBINE }     from './modules/combine.nf'
 include { MERGE }       from './modules/merge.nf'
-include { PCA }         from './modules/pca.nf'
+include { FILTER }      from './modules/filter.nf'
+include { SCALE }       from './modules/scale.nf'
 include { PLOT }        from './modules/plot.nf'
 
 // Define input channels
@@ -63,11 +64,12 @@ workflow {
         }
         | set { snps }
 
-    // Merge cohorts, and run PCA
+    // Merge cohorts, filter, scale and plot
     snps.cohort
         | combine(snps.ref)
         | MERGE
+        | FILTER
         | combine(modes_ch)
-        | PCA
+        | SCALE
         | PLOT
 }
