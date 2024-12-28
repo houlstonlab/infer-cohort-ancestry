@@ -13,6 +13,7 @@ include { COMBINE }     from './modules/combine.nf'
 include { MERGE }       from './modules/merge.nf'
 include { FILTER }      from './modules/filter.nf'
 include { SCALE }       from './modules/scale.nf'
+include { ASSIGN }      from './modules/assign.nf'
 include { PLOT }        from './modules/plot.nf'
 
 // Define input channels
@@ -71,5 +72,6 @@ workflow {
         | FILTER
         | combine(modes_ch)
         | SCALE
+        | ASSIGN
         | PLOT
 }

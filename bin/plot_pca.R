@@ -12,7 +12,7 @@ dims    <- args[6]
 
 # Load population data
 populations <- read.table(pop, header = FALSE)
-names(populations) <- c('FID', 'IID', 'pop', 'superpop')
+names(populations) <- c('FID', 'IID', 'pop', 'superpop', 'assigned')
 
 # Load scaled data
 if ( mode == 'mds' ) {
