@@ -5,6 +5,7 @@ nextflow.enable.dsl=2
 // Include modules
 include { COORDINATES } from './modules/coordinates.nf'
 include { SUBSET }      from './modules/subset.nf'
+include { REMOVE }      from './modules/remove.nf'
 include { UPDATE }      from './modules/update.nf'
 include { FIX }         from './modules/fix.nf'
 include { CONVERT }     from './modules/convert.nf'
@@ -49,6 +50,7 @@ workflow {
         | combine(population_ch, by: 0) 
         | combine(coordinates)
         | SUBSET
+        | REMOVE
         | combine(dbsnp)
         | UPDATE
         | combine(fasta)
