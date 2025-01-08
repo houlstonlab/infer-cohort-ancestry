@@ -1,0 +1,4 @@
+[submodule "bin"]
+	path = bin
+	url = git@github.com:houlstonlab/gentools-scripts.git
+	branch = infer-cohort-ancestry
