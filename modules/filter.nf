@@ -14,11 +14,11 @@ process FILTER {
 
     output:
     tuple val(ref), val(cohort),
-          path("${ref}.${cohort}.bim"),
-          path("${ref}.${cohort}.bed"),
-          path("${ref}.${cohort}.fam"),
-          path("${ref}.${cohort}.nosex"),
-          path("${ref}.${cohort}.log"),
+          path("${ref}.${cohort}.filtered.bim"),
+          path("${ref}.${cohort}.filtered.bed"),
+          path("${ref}.${cohort}.filtered.fam"),
+          path("${ref}.${cohort}.filtered.nosex"),
+          path("${ref}.${cohort}.filtered.log"),
           path(pop)
 
     script:
@@ -41,6 +41,6 @@ process FILTER {
     plink --bfile filtered \
         --extract ${ref}.${cohort}.variants.txt \
         --make-bed \
-        --out ${ref}.${cohort}
+        --out ${ref}.${cohort}.filtered
     """
 }

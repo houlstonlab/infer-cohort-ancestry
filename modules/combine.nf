@@ -35,7 +35,6 @@ process COMBINE {
 
     plink \
         --make-bed \
-        --update-ids famids.txt \
         --merge-list allfiles.txt \
         --out ${cohort}.${type}
     """

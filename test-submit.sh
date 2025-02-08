@@ -13,12 +13,12 @@ cd test/
 # # Download test data
 # URL="https://figshare.com/ndownloader/files"
 
-# wget -c $URL/51198488 -O input/vcf-ancestry.tar.gz
+# wget -c $URL/52216769 -O input/vcf-ancestry.tar.gz
 
 # # Unzip the files
 # tar -xzvf input/vcf-ancestry.tar.gz -C input/
-# cp /data/reference-data/iGenomes/Homo_sapiens/GATK/GRCh38/Sequence/WholeGenomeFasta/Homo_sapiens_assembly38.fasta test/input/assembly38.fasta
-# cp /data/reference-data/iGenomes/Homo_sapiens/GATK/GRCh38/Sequence/WholeGenomeFasta/Homo_sapiens_assembly38.fasta.fai test/input/assembly38.fasta.fai 
+# cp /data/reference-data/iGenomes/Homo_sapiens/GATK/GRCh38/Sequence/WholeGenomeFasta/Homo_sapiens_assembly38.fasta input/assembly38.fasta
+# cp /data/reference-data/iGenomes/Homo_sapiens/GATK/GRCh38/Sequence/WholeGenomeFasta/Homo_sapiens_assembly38.fasta.fai input/assembly38.fasta.fai 
 
 # Run nextflow
 module load Nextflow

@@ -16,14 +16,13 @@ process SCALE {
     tuple val(ref), val(cohort), val(mode),
           path("${ref}.${cohort}.${mode}.txt"),
           path("${ref}.${cohort}.${mode}.log"),
-          path("${ref}.${cohort}.${mode}.pop")
+          path(pop)
 
     script:
     if (mode == 'clusters') {
         """
         #!/bin/bash
         # Return population file, and extract clusters
-        cat ${pop} > ${ref}.${cohort}.${mode}.pop
         cat ${pop} | awk '{ print \$1, \$2, \$3}' > populations.txt
         cat ${pop} | awk '{ print \$3}' | sort -u | grep -v "NA" > clusters.txt
         

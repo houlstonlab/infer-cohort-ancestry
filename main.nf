@@ -18,21 +18,23 @@ include { ASSIGN }      from './modules/assign.nf'
 include { PLOT }        from './modules/plot.nf'
 
 // Define input channels
-chroms_ch =  Channel.of (1..22)
-
-variants_ch     = Channel.fromFilePairs(params.vcf, flat: true)
-population_ch   = Channel.fromPath(params.population)
-    | map { [it.simpleName, it] }
-
-cohorts_info_ch = Channel.fromPath(params.cohorts_info)
+cohorts_info_ch = Channel.fromPath(params.cohorts)
     | splitCsv(header: true, sep: ',')
     | map { row -> [ row.cohort, row.type, row.size ] }
 
-dbsnp               = Channel.fromFilePairs(params.dbsnp, flat: true)
-fasta               = Channel.fromFilePairs(params.fasta, flat: true)
-ld_regions          = Channel.fromPath(params.ld_regions)
+variants_ch = Channel.fromPath(params.cohorts)
+    | splitCsv(header: true, sep: ',')
+    | map { row -> [ row.cohort, file(row.vars_file), file(row.vars_index) ] }
 
-modes_ch            = Channel.of(params.modes.split(','))
+population_ch = Channel.fromPath(params.cohorts)
+    | splitCsv(header: true, sep: ',')
+    | map { row -> [ row.cohort, file(row.population) ] }
+
+dbsnp       = Channel.fromFilePairs(params.dbsnp, flat: true)
+fasta       = Channel.fromFilePairs(params.fasta, flat: true)
+ld_regions  = Channel.fromPath(params.ld_regions)
+chroms_ch   = Channel.of (1..2)
+modes_ch    = Channel.of(params.modes.split(','))
 
 // worflow
 workflow {
