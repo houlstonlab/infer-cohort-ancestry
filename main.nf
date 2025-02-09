@@ -33,7 +33,7 @@ population_ch = Channel.fromPath(params.cohorts)
 dbsnp       = Channel.fromFilePairs(params.dbsnp, flat: true)
 fasta       = Channel.fromFilePairs(params.fasta, flat: true)
 ld_regions  = Channel.fromPath(params.ld_regions)
-chroms_ch   = Channel.of (1..2)
+chroms_ch   = Channel.of (1..22)
 modes_ch    = Channel.of(params.modes.split(','))
 
 // worflow

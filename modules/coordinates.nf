@@ -1,5 +1,5 @@
 process COORDINATES {
-    tag "${key}.${chrom}"
+    tag "${key}:${chrom}"
 
     label 'simple'
 
