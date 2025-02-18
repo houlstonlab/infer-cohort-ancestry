@@ -18,13 +18,18 @@ include { ASSIGN }      from './modules/assign.nf'
 include { PLOT }        from './modules/plot.nf'
 
 // Define input channels
-cohorts_info_ch = Channel.fromPath(params.cohorts)
-    | splitCsv(header: true, sep: ',')
-    | map { row -> [ row.cohort, row.type, row.size ] }
+// cohorts_info_ch = Channel.fromPath(params.cohorts)
+//     | splitCsv(header: true, sep: ',')
+//     | map { row -> [ row.cohort, row.type, row.size ] }
 
 variants_ch = Channel.fromPath(params.cohorts)
     | splitCsv(header: true, sep: ',')
-    | map { row -> [ row.cohort, file(row.vars_file), file(row.vars_index) ] }
+    // | map { row -> [ row.cohort, file(row.vars_file), file(row.vars_index) ] }
+    | map { row -> [ 
+        row.cohort, row.type, row.size,
+        file(row.vars_file), file(row.vars_index),
+        file(row.population)
+     ] }
 
 population_ch = Channel.fromPath(params.cohorts)
     | splitCsv(header: true, sep: ',')
@@ -33,30 +38,34 @@ population_ch = Channel.fromPath(params.cohorts)
 dbsnp       = Channel.fromFilePairs(params.dbsnp, flat: true)
 fasta       = Channel.fromFilePairs(params.fasta, flat: true)
 ld_regions  = Channel.fromPath(params.ld_regions)
-chroms_ch   = Channel.of (1..22)
+chroms_ch   = Channel.of (1..22) | map { "chr$it" }
 modes_ch    = Channel.of(params.modes.split(','))
 
 // worflow
 workflow {
     // Prepare SNPs
-    variants_ch
-        | concat(dbsnp)
+    // variants_ch
+    //     | concat(dbsnp)
+    dbsnp
         | combine(chroms_ch)
         | COORDINATES
-        | groupTuple(by: 0)
         | set { coordinates }
 
-    // Subset, update, filter, convert, and prune
+    // // Subset, update, filter, convert, and prune
     variants_ch 
-        | combine(cohorts_info_ch, by: 0) 
-        | combine(population_ch, by: 0) 
+    //     | combine(cohorts_info_ch, by: 0) 
+    //     | combine(population_ch, by: 0) 
         | combine(coordinates)
         | SUBSET
+        | filter { it[3].toInteger() > 0 }
         | REMOVE
+        | filter { it[3].toInteger() > 0 }
         | combine(dbsnp)
         | UPDATE
+        | filter { it[3].toInteger() > 0 }
         | combine(fasta)
         | FIX
+        | filter { it[3].toInteger() > 0 }
         | CONVERT
         | combine(ld_regions)
         | PRUNE

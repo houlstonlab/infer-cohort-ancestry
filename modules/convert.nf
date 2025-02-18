@@ -8,7 +8,7 @@ process CONVERT {
     publishDir("${params.output_dir}/plinked", mode: 'copy')
 
     input:
-    tuple val(cohort), val(type), val(chrom),
+    tuple val(cohort), val(type), val(chrom), env(n_vars),
           path(vcf_in), path(index_in)
 
     output:
@@ -28,6 +28,7 @@ process CONVERT {
         --make-bed \
         --const-fid 0 \
         --exclude tmp.exclude \
+        --fill-missing-a2 \
         --out ${cohort}.${type}.${chrom}
     """
 }

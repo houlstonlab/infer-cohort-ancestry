@@ -8,11 +8,11 @@ process REMOVE {
     publishDir("${params.output_dir}/removed", mode: 'copy')
 
     input:
-    tuple val(cohort), val(type), val(chrom),
+    tuple val(cohort), val(type), val(chrom), env(n_vars),
           path(vcf_in), path(index_in)
 
     output:
-    tuple val(cohort), val(type), val(chrom),
+    tuple val(cohort), val(type), val(chrom), env(n_vars),
           path("${cohort}.${type}.${chrom}.removed.vcf.gz"),
           path("${cohort}.${type}.${chrom}.removed.vcf.gz.tbi")
      
@@ -27,5 +27,6 @@ process REMOVE {
         -Oz -o ${cohort}.${type}.${chrom}.removed.vcf.gz
     
     tabix ${cohort}.${type}.${chrom}.removed.vcf.gz
+    n_vars=\$(bcftools index -n ${cohort}.${type}.${chrom}.removed.vcf.gz)
     """
 }
