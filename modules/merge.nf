@@ -31,20 +31,29 @@ process MERGE {
     # Attempt to merge and identify problematic SNPs
     plink --bfile ${ref_bim.baseName} \
         --bmerge ${cohort_bed} ${cohort_bim} ${cohort_fam} \
-        --merge-mode 6 \
         --out merge_attempt || true
     
     if [ -f merge_attempt.missnp ]; then
         # Remove problematic SNPs from both datasets
-        plink --bfile ${ref_bim.baseName} --exclude merge_attempt.missnp --make-bed --out ref_cleaned
-        plink --bfile ${cohort_bim.baseName} --exclude merge_attempt.missnp --make-bed --out cases_cleaned
+        plink --bfile ${ref_bim.baseName} --exclude merge_attempt.missnp --write-snplist --out ref_cleaned
+        plink --bfile ${cohort_bim.baseName} --exclude merge_attempt.missnp --write-snplist --out cases_cleaned
+        
+        # Common SNPs from both datasets
+        comm -12 ref_cleaned.snplist cases_cleaned.snplist > common_snps.txt
 
         # Attempt to merge with removing problematic SNPs
-        plink --bfile ref_cleaned \
-            --bmerge cases_cleaned.bed cases_cleaned.bim cases_cleaned.fam \
+        plink --bfile ${ref_bim.baseName} \
+            --bmerge ${cohort_bed} ${cohort_bim} ${cohort_fam} \
+            --extract common_snps.txt \
             --make-bed \
             --out ${ref}.${cohort}
     else
+        # Common SNPs from both datasets
+        plink --bfile ${ref_bim.baseName} --write-snplist --out ref_cleaned
+        plink --bfile ${cohort_bim.baseName} --write-snplist --out cases_cleaned
+
+        comm -12 ref_cleaned.snplist cases_cleaned.snplist > common_snps.txt
+
         plink --bfile ${ref_bim.baseName} \
             --bmerge ${cohort_bed} ${cohort_bim} ${cohort_fam} \
             --make-bed \
