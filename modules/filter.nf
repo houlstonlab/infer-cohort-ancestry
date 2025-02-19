@@ -29,16 +29,13 @@ process FILTER {
         --maf ${params.MAF} \
         --hwe ${params.HWE} \
         --geno ${params.F_MISSING} \
-        --make-bed \
+        --write-snplist \
         --out filtered
     
     # Select N_VARS random variants
-    RANDOM=42; shuf -n ${params.N_VARS} filtered.bim | \
-    cut -f 2 | \
-    uniq \
-    > ${ref}.${cohort}.variants.txt
+    RANDOM=42; shuf -n ${params.N_VARS} filtered.snplist > ${ref}.${cohort}.variants.txt
 
-    plink --bfile filtered \
+    plink --bfile ${bim.baseName} \
         --extract ${ref}.${cohort}.variants.txt \
         --make-bed \
         --out ${ref}.${cohort}.filtered
