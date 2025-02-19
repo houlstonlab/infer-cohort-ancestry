@@ -1,7 +1,7 @@
 process COORDINATES {
     tag "${key}:${chrom}"
 
-    label 'simple'
+    label 'heavy'
 
     container = params.bcftools
 
@@ -16,7 +16,7 @@ process COORDINATES {
     script:
     """
     #!/bin/bash
-    bcftools view -v snps -m2 -M2 -r ${chrom} ${params.common ? "-i 'COMMON=1'" : ""} ${vcf} | \
+    bcftools view -v snps -m2 -M2 -r ${chrom} ${params.common ? "-i 'G5=1'" : ""} ${vcf} | \
     bcftools query -f '%CHROM\t%POS\n' | \
     uniq > ${key}.${chrom}.snps.txt
     """
