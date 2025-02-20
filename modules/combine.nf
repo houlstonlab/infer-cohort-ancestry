@@ -9,7 +9,9 @@ process COMBINE {
 
     input:
     tuple val(cohort), val(type), val(chrom),
-          path(bim), path(bed), path(fam), path(nosex), path(in), path(out), path(log), path(pop)
+          path(bim), path(bed), path(fam), path(nosex),
+        //   path(in), path(out),
+          path(log), path(pop)
 
     output:
     tuple val(cohort), val(type),

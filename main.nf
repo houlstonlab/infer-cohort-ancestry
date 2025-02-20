@@ -67,8 +67,21 @@ workflow {
         | FIX
         | filter { it[3].toInteger() > 0 }
         | CONVERT
+        // | combine(ld_regions)
+        // | PRUNE
+        // | groupTuple(by: [0,1])
+        // | combine(population_ch, by: 0) 
+        // | COMBINE
+        | branch {
+            ref     : it[1] == 'references'
+            cohort  : it[1] == 'cases'
+        }
+        | set { cases }
+
+    cases.cohort
         | combine(ld_regions)
         | PRUNE
+        | concat(cases.ref)
         | groupTuple(by: [0,1])
         | combine(population_ch, by: 0) 
         | COMBINE
