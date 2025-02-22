@@ -20,6 +20,5 @@ process ASSIGN {
     """
     #!/bin/bash
     assign_pop.R ${ref} ${cohort} ${mode} ${file} ${pop} ${params.N_DIMS}
-
     """
 }

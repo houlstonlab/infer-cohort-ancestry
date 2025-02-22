@@ -8,6 +8,7 @@ include { SUBSET }      from './modules/subset.nf'
 include { REMOVE }      from './modules/remove.nf'
 include { UPDATE }      from './modules/update.nf'
 include { FIX }         from './modules/fix.nf'
+include { FILL }        from './modules/fill.nf'
 include { CONVERT }     from './modules/convert.nf'
 include { PRUNE }       from './modules/prune.nf'
 include { COMBINE }     from './modules/combine.nf'
@@ -66,22 +67,36 @@ workflow {
         | combine(fasta)
         | FIX
         | filter { it[3].toInteger() > 0 }
-        | CONVERT
+        // | CONVERT
         // | combine(ld_regions)
         // | PRUNE
         // | groupTuple(by: [0,1])
         // | combine(population_ch, by: 0) 
         // | COMBINE
-        | branch {
-            ref     : it[1] == 'references'
-            cohort  : it[1] == 'cases'
-        }
+        // | branch {
+        //     ref     : it[1] == 'references'
+        //     cohort  : it[1] == 'cases'
+        // }
+        | filter { it[1] == 'cases' }
+        // | FILL
         | set { cases }
-
-    cases.cohort
+    
+    FIX.out
+        | filter { it[1] == 'references' }
+        | concat(cases)
+        | filter { it[3].toInteger() > 0 }
+        | CONVERT
+        | filter { it[1] == 'cases' }
         | combine(ld_regions)
         | PRUNE
-        | concat(cases.ref)
+    
+    CONVERT.out
+        | filter { it[1] == 'references' }
+        | concat(PRUNE.out)
+    // cases.cohort
+    //     | combine(ld_regions)
+    //     | PRUNE
+    //     | concat(cases.ref)
         | groupTuple(by: [0,1])
         | combine(population_ch, by: 0) 
         | COMBINE

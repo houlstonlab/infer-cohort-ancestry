@@ -26,7 +26,10 @@ process MERGE {
     """
     #!/bin/bash
     # Return population file
-    cat ${ref_pop} ${cohort_pop} > ${ref}.${cohort}.pop
+    cat \
+        <(cat ${ref_pop}    | awk '{print \$0, "${ref_type}"}') \
+        <(cat ${cohort_pop} | awk '{print \$0, "${cohort_type}"}') \
+        > ${ref}.${cohort}.pop
     
     # Attempt to merge and identify problematic SNPs
     plink --bfile ${ref_bim.baseName} \
