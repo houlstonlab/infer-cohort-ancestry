@@ -44,71 +44,68 @@ modes_ch    = Channel.of(params.modes.split(','))
 
 // worflow
 workflow {
-    // Prepare SNPs
-    // variants_ch
-    //     | concat(dbsnp)
+    // Get coordinates
     dbsnp
         | combine(chroms_ch)
         | COORDINATES
         | set { coordinates }
 
-    // // Subset, update, filter, convert, and prune
+    // Subset, remove, update, fix
     variants_ch 
-    //     | combine(cohorts_info_ch, by: 0) 
-    //     | combine(population_ch, by: 0) 
         | combine(coordinates)
         | SUBSET
         | filter { it[3].toInteger() > 0 }
-        | REMOVE
+        | ( params.remove ? REMOVE : map {it} )
         | filter { it[3].toInteger() > 0 }
-        | combine(dbsnp)
-        | UPDATE
+        | ( params.update ? combine(dbsnp) : map {it} )
+        | ( params.update ? UPDATE : map {it} )
         | filter { it[3].toInteger() > 0 }
-        | combine(fasta)
-        | FIX
+        | ( params.fix    ? combine(fasta) : map {it} )
+        | ( params.fix    ? FIX    : map {it} )
         | filter { it[3].toInteger() > 0 }
-        // | CONVERT
-        // | combine(ld_regions)
-        // | PRUNE
-        // | groupTuple(by: [0,1])
-        // | combine(population_ch, by: 0) 
-        // | COMBINE
-        // | branch {
-        //     ref     : it[1] == 'references'
-        //     cohort  : it[1] == 'cases'
-        // }
-        | filter { it[1] == 'cases' }
-        // | FILL
+        | branch {
+            references : it[1] == 'references'
+            cases      : it[1] == 'cases'
+        }
+        | set { snps }
+
+    // Fill cases
+    snps.cases
+        | ( params.fill ? FILL : map {it} )
         | set { cases }
-    
-    FIX.out
-        | filter { it[1] == 'references' }
+
+    // Convert    
+    snps.references
         | concat(cases)
         | filter { it[3].toInteger() > 0 }
         | CONVERT
-        | filter { it[1] == 'cases' }
-        | combine(ld_regions)
-        | PRUNE
+                | branch {
+            references : it[1] == 'references'
+            cases      : it[1] == 'cases'
+        }
+        | set { snps }
+
+    // Prune
+    snps.cases
+        | ( params.prune ? combine(ld_regions) : map {it} )
+        | ( params.prune ? PRUNE : map {it} )
+        | set { cases }
     
-    CONVERT.out
-        | filter { it[1] == 'references' }
-        | concat(PRUNE.out)
-    // cases.cohort
-    //     | combine(ld_regions)
-    //     | PRUNE
-    //     | concat(cases.ref)
+    // Combine
+    snps.references
+        | concat(cases)
         | groupTuple(by: [0,1])
         | combine(population_ch, by: 0) 
         | COMBINE
         | branch {
-            ref     : it[1] == 'references'
-            cohort  : it[1] == 'cases'
+            references : it[1] == 'references'
+            cases      : it[1] == 'cases'
         }
         | set { snps }
 
-    // Merge cohorts, filter, scale and plot
-    snps.cohort
-        | combine(snps.ref)
+    // Merge, filter, scale, assign and plot
+    snps.cases
+        | combine(snps.references)
         | MERGE
         | FILTER
         | combine(modes_ch)
