@@ -28,6 +28,7 @@ process SUBSET {
         -S <(awk '{ print \$2 }' ${population}) \
         -R ${coordinates} \
         -g het \
+        -v snps -m2 -M2 \
         --threads ${task.cpu} \
         -Oz -o ${cohort}.${type}.${chrom}.snps.vcf.gz
     tabix ${cohort}.${type}.${chrom}.snps.vcf.gz
