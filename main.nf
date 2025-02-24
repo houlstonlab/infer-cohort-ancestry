@@ -39,7 +39,7 @@ population_ch = Channel.fromPath(params.cohorts)
 dbsnp       = Channel.fromFilePairs(params.dbsnp, flat: true)
 fasta       = Channel.fromFilePairs(params.fasta, flat: true)
 ld_regions  = Channel.fromPath(params.ld_regions)
-chroms_ch   = Channel.of (1..22) | map { "chr$it" }
+chroms_ch   = Channel.of (1..2) | map { "chr$it" }
 modes_ch    = Channel.of(params.modes.split(','))
 
 // worflow
@@ -48,11 +48,7 @@ workflow {
     dbsnp
         | combine(chroms_ch)
         | COORDINATES
-        | set { coordinates }
-
-    // Subset, remove, update, fix
-    variants_ch 
-        | combine(coordinates)
+        | combine(variants_ch)
         | SUBSET
         | filter { it[3].toInteger() > 0 }
         | ( params.remove ? REMOVE : map {it} )
@@ -79,7 +75,7 @@ workflow {
         | concat(cases)
         | filter { it[3].toInteger() > 0 }
         | CONVERT
-                | branch {
+        | branch {
             references : it[1] == 'references'
             cases      : it[1] == 'cases'
         }

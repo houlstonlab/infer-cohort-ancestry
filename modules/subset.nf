@@ -8,10 +8,10 @@ process SUBSET {
     publishDir("${params.output_dir}/cohorts", mode: 'copy')
 
     input:
-    tuple val(cohort), val(type), val(size), 
+    tuple val(chrom), path(coordinates),
+          val(cohort), val(type), val(size), 
 		  path(vcf_in), path(index_in),
-          path(population), 
-          val(chrom), path(coordinates)
+          path(population)
 
     output:
     tuple val(cohort), val(type), val(chrom), env(n_vars),
