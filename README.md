@@ -52,6 +52,14 @@ nextflow run houlstonlab/infer-cohort-ancestry \
     - `modes`: one or more of `'clusters,noclusters,mds'`. The first two are the
     PCA analysis within or without clusters/populations.
 
+- Optional filters
+    - `common`: restrict to common variants. Default is true
+    - `fill`: fill in low confidence variants as reference. Default is false
+    - `prune`: prune study variants. Default is = true
+    - `fix`: match reference allele to reference genome. Default is true
+    - `remove`: remove ambigious calls. Default is true
+    - `update`: update variants IDs to dbsnp. Default is true
+
 ### Output
 
 - `cohorts/` : subsets of the VCF files
