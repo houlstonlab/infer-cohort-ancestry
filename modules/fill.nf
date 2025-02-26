@@ -25,11 +25,11 @@ process FILL {
     bcftools +setGT -- -t . -n 0 | \
     bcftools +fill-tags -- -t all | \
     bcftools view -e 'HWE < ${params.HWE} || ExcHet < ${params.ExcHet}' | \
-	bcftools view -g het --threads ${task.cpu} -Oz -o ${cohort}.${type}.${chrom}.filled.vcf.gz
+    bcftools +setGT -- -t q -n 0 -i 'FMT/GQ < ${params.GQ} | FMT/DP < ${params.DP} | VAF < ${params.VAF}' | \
+    bcftools +fill-tags -- -t all | \
+    bcftools view -e 'MAF < ${params.MAF}' | \
+ 	bcftools view -g het --threads ${task.cpu} -Oz -o ${cohort}.${type}.${chrom}.filled.vcf.gz
     tabix ${cohort}.${type}.${chrom}.filled.vcf.gz
     n_vars=\$(bcftools index -n ${cohort}.${type}.${chrom}.filled.vcf.gz)
 	"""
 }
-
-    // bcftools +setGT -- -t q -n 0 -i 'FMT/GQ < ${params.GQ} | FMT/DP < ${params.DP} | VAF < ${params.VAF}' | \
-    // bcftools +fill-tags -- -t all | \
