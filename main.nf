@@ -3,7 +3,6 @@
 nextflow.enable.dsl=2
 
 // Include modules
-include { COORDINATES } from './modules/coordinates.nf'
 include { SUBSET }      from './modules/subset.nf'
 include { REMOVE }      from './modules/remove.nf'
 include { UPDATE }      from './modules/update.nf'
