@@ -1,7 +1,7 @@
 process COMBINE {
     tag "${cohort}:${type}"
 
-    label 'simple'
+    label 'heavy'
 
     container = params.plink
 
