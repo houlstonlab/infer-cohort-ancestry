@@ -19,13 +19,8 @@ include { ASSIGN }      from './modules/assign.nf'
 include { PLOT }        from './modules/plot.nf'
 
 // Define input channels
-// cohorts_info_ch = Channel.fromPath(params.cohorts)
-//     | splitCsv(header: true, sep: ',')
-//     | map { row -> [ row.cohort, row.type, row.size ] }
-
 variants_ch = Channel.fromPath(params.cohorts)
     | splitCsv(header: true, sep: ',')
-    // | map { row -> [ row.cohort, file(row.vars_file), file(row.vars_index) ] }
     | map { row -> [ 
         row.cohort, row.type, row.size,
         file(row.vars_file), file(row.vars_index),
@@ -44,11 +39,9 @@ modes_ch    = Channel.of(params.modes.split(','))
 
 // worflow
 workflow {
-    // Get coordinates
-    dbsnp
+    // Get variants
+    variants_ch
         | combine(chroms_ch)
-        | COORDINATES
-        | combine(variants_ch)
         | SUBSET
         | filter { it[3].toInteger() > 0 }
         | ( params.remove ? REMOVE : map {it} )
