@@ -28,7 +28,7 @@ process SUBSET {
         ${vcf_in} \
         -S <(awk '{ print \$2 }' ${population}) \
         -r ${chrom} \
-        -g het \
+        -i 'AC>0' \
         -v snps -m2 -M2 \
         --threads ${task.cpu} \
         -Oz -o ${cohort}.${type}.${chrom}.snps.vcf.gz

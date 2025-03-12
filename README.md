@@ -62,16 +62,16 @@ nextflow run houlstonlab/infer-cohort-ancestry \
 
 ### Output
 
-- `cohorts/` : subsets of the VCF files
+- `cohorts/`  : subsets of the VCF files
 - `updated/`  : updated VCF files with variant IDs
-- `filtered/` : filtered VCF files
-- `plinked/`  : the selected variants in plink format
 - `removed/`  : ambigious calls removed 
 - `updated/`  : updated alleles as in dbsnp
 - `fixed/`    : fixed reference allele
-- `combined/` : combined plink files
-- `merged/`   : merged cases and references in one plink file
 - `pruned/`   : pruned variants
+- `combined/` : combined plink files
+- `plinked/`  : the selected variants in plink format
+- `merged/`   : merged cases and references in one plink file
+- `filtered/` : filtered plink files
 - `scaled/`   : principal components or MDS
 - `assigned/` : assinged ancestry
 - `plots/`    : dimension reduction plots

@@ -13,6 +13,7 @@ include { PRUNE }       from './modules/prune.nf'
 include { COMBINE }     from './modules/combine.nf'
 include { MERGE }       from './modules/merge.nf'
 include { FILTER }      from './modules/filter.nf'
+include { SELECT }      from './modules/select.nf'
 include { SCALE }       from './modules/scale.nf'
 include { ASSIGN }      from './modules/assign.nf'
 include { PLOT }        from './modules/plot.nf'
@@ -30,6 +31,7 @@ population_ch = Channel.fromPath(params.cohorts)
     | splitCsv(header: true, sep: ',')
     | map { row -> [ row.cohort, file(row.population) ] }
 
+snplist_ch  = Channel.fromPath(params.snplist)
 dbsnp       = Channel.fromFilePairs(params.dbsnp, flat: true)
 fasta       = Channel.fromFilePairs(params.fasta, flat: true)
 ld_regions  = Channel.fromPath(params.ld_regions)
@@ -95,7 +97,9 @@ workflow {
     snps.cases
         | combine(snps.references)
         | MERGE
+        | combine(snplist_ch)
         | FILTER
+        | SELECT
         | combine(modes_ch)
         | SCALE
         | ASSIGN
