@@ -2,8 +2,7 @@ process CONVERT {
     tag "${cohort}:${type}:${chrom}"
 
     label 'simple'
-
-    container = params.plink
+    label 'plink'
 
     publishDir("${params.output_dir}/plinked", mode: 'copy')
 

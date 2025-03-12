@@ -2,8 +2,7 @@ process FILTER {
     tag "${ref}:${cohort}"
 
     label 'simple'
-
-    container = params.plink
+    label 'plink'
 
     publishDir("${params.output_dir}/filtered", mode: 'copy')
 

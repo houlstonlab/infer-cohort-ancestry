@@ -2,8 +2,7 @@ process FILL {
     tag "${cohort}:${type}:${chrom}"
 
     label 'simple'
-
-    container = params.bcftools
+    label 'bcftools'
 
     publishDir("${params.output_dir}/filled", mode: 'copy')
 

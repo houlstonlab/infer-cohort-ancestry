@@ -2,8 +2,7 @@ process COMBINE {
     tag "${cohort}:${type}"
 
     label 'heavy'
-
-    container = params.plink
+    label 'plink'
 
     publishDir("${params.output_dir}/combined", mode: 'copy')
 

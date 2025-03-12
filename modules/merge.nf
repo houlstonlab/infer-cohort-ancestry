@@ -2,8 +2,7 @@ process MERGE {
     tag "${ref}:${cohort}"
 
     label 'simple'
-
-    container = params.plink
+    label 'plink'
 
     publishDir("${params.output_dir}/merged", mode: 'copy')
 

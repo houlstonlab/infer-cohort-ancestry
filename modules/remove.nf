@@ -2,8 +2,7 @@ process REMOVE {
     tag "${cohort}:${type}:${chrom}"
 
     label 'simple'
-
-    container = params.bcftools
+    label 'bcftools'
 
     publishDir("${params.output_dir}/removed", mode: 'copy')
 

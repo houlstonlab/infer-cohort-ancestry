@@ -2,8 +2,7 @@ process SELECT {
     tag "${ref}:${cohort}"
 
     label 'simple'
-
-    container = params.plink
+    label 'plink'
 
     publishDir("${params.output_dir}/selected", mode: 'copy')
 

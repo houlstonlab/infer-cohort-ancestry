@@ -2,8 +2,7 @@ process ASSIGN {
     tag "${ref}:${cohort}:${mode}"
 
     label 'simple'
-
-    container = params.rocker
+    label 'rocker'
 
     publishDir("${params.output_dir}/assigned", mode: 'copy')
 

@@ -2,8 +2,7 @@ process SCALE {
     tag "${ref}:${cohort}:${mode}"
 
     label 'simple'
-
-    container = params.plink
+    label 'plink'
 
     publishDir("${params.output_dir}/scaled", mode: 'copy')
 

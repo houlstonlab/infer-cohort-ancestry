@@ -2,8 +2,7 @@ process PRUNE {
     tag "${cohort}:${type}:${chrom}"
 
     label 'simple'
-
-    container = params.plink
+    label 'plink'
 
     publishDir("${params.output_dir}/pruned", mode: 'copy')
 
