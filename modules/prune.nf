@@ -17,8 +17,6 @@ process PRUNE {
           path("${cohort}.${type}.${chrom}.prune.bed"),
           path("${cohort}.${type}.${chrom}.prune.fam"),
           path("${cohort}.${type}.${chrom}.prune.nosex"),
-        //   path("${cohort}.${type}.${chrom}.prune.in"),
-        //   path("${cohort}.${type}.${chrom}.prune.out"),
           path("${cohort}.${type}.${chrom}.prune.log")
 
     script:

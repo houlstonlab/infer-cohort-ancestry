@@ -7,7 +7,6 @@ process SUBSET {
     publishDir("${params.output_dir}/cohorts", mode: 'copy')
 
     input:
-    // tuple val(chrom), path(coordinates),
     tuple val(cohort), val(type), val(size), 
 		  path(vcf_in), path(index_in),
           path(population),
@@ -35,6 +34,3 @@ process SUBSET {
     n_vars=\$(bcftools index -n ${cohort}.${type}.${chrom}.snps.vcf.gz)
     """
 }
-
-    // bcftools norm -d none | \
-    // bcftools view -v snps -m2 -M2 | \
