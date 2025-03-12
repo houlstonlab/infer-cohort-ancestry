@@ -37,6 +37,7 @@ nextflow run houlstonlab/infer-cohort-ancestry \
     - `fasta`: assembly fasta file
     - `dbsnp`: dbsnp VCF file and index
     - `ld_regions`: bed file of genomic regions to exclude
+    - `snplist`: IDs of SNPs to use
 
 - Parameters
     - `AF`: allele frequency. Default is 0
@@ -72,6 +73,7 @@ nextflow run houlstonlab/infer-cohort-ancestry \
 - `plinked/`  : the selected variants in plink format
 - `merged/`   : merged cases and references in one plink file
 - `filtered/` : filtered plink files
+- `selected/` : selected plink files
 - `scaled/`   : principal components or MDS
 - `assigned/` : assinged ancestry
 - `plots/`    : dimension reduction plots
