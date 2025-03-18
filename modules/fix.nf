@@ -7,14 +7,16 @@ process FIX {
     publishDir("${params.output_dir}/fixed", mode: 'copy')
 
     input:
-    tuple val(cohort), val(type), val(chrom), env(n_vars),
-          path(vcf_in), path(index_in), 
+    tuple val(cohort), val(type), val(chrom), val(chunk),
+          path(vcf_in), path(index_in),
+          env(n_vars),
           val(fasta), path(fasta_in), path(fasta_index)
 
     output:
-    tuple val(cohort), val(type), val(chrom), env(n_vars),
-          path("${cohort}.${type}.${chrom}.fixed.vcf.gz"),
-          path("${cohort}.${type}.${chrom}.fixed.vcf.gz.tbi")
+    tuple val(cohort), val(type), val(chrom), val(chunk),
+          path("${cohort}.${type}.${chrom}.${chunk}.fixed.vcf.gz"),
+          path("${cohort}.${type}.${chrom}.${chunk}.fixed.vcf.gz.tbi"),
+          env(n_vars)
      
     script:
     """
@@ -22,12 +24,12 @@ process FIX {
     # Fix VCF file
     bcftools +fixref \
         ${vcf_in} \
-        -Oz -o ${cohort}.${type}.${chrom}.fixed.vcf.gz \
+        -Oz -o ${cohort}.${type}.${chrom}.${chunk}.fixed.vcf.gz \
         -- -d \
         -f ${fasta_in} \
         -m flip
 
-    tabix ${cohort}.${type}.${chrom}.fixed.vcf.gz
-    n_vars=\$(bcftools index -n ${cohort}.${type}.${chrom}.fixed.vcf.gz)
+    tabix ${cohort}.${type}.${chrom}.${chunk}.fixed.vcf.gz
+    n_vars=\$(bcftools index -n ${cohort}.${type}.${chrom}.${chunk}.fixed.vcf.gz)
     """
 }

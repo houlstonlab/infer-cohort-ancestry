@@ -9,8 +9,7 @@ process FILTER {
     input:
     tuple val(ref), val(cohort),
           path(bim), path(bed), path(fam), path(nosex), path(log),
-          path(pop),
-          path(snplist)
+          path(pop)
 
     output:
     tuple val(ref), val(cohort),
@@ -29,7 +28,6 @@ process FILTER {
         --maf ${params.MAF} \
         --hwe ${params.HWE} \
         --geno ${params.F_MISSING} \
-        --extract ${snplist} \
         --make-bed \
         --out ${ref}.${cohort}.filtered
     """

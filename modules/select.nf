@@ -1,39 +1,36 @@
 process SELECT {
-    tag "${ref}:${cohort}"
+    tag "${key}:${chrom}"
 
     label 'simple'
-    label 'plink'
+    label 'bcftools'
 
     publishDir("${params.output_dir}/selected", mode: 'copy')
 
     input:
-    tuple val(ref), val(cohort),
-          path(bim), path(bed), path(fam), path(nosex), path(log),
-          path(pop)
+    tuple val(key), path(file), path(index), 
+          val(chrom)
 
     output:
-    tuple val(ref), val(cohort),
-          path("${ref}.${cohort}.selected.bim"),
-          path("${ref}.${cohort}.selected.bed"),
-          path("${ref}.${cohort}.selected.fam"),
-          path("${ref}.${cohort}.selected.nosex"),
-          path("${ref}.${cohort}.selected.log"),
-          path(pop)
+    tuple val(key), val(chrom),
+          path("${key}.${chrom}.vcf.gz"),
+          path("${key}.${chrom}.vcf.gz.tbi"),
+          path("${key}.${chrom}.txt")
 
     script:
     """
     #!/bin/bash
-    # Filter variants
-    plink --bfile ${bim.baseName} \
-        --write-snplist \
-        --out selected
-    
-    # Select N_VARS random variants
-    RANDOM=42; shuf -n ${params.N_VARS} selected.snplist > ${ref}.${cohort}.variants.txt
+    # Select variants
+    bcftools view \
+    -r ${chrom} \
+    -i 'VC=="SNV" && SAO!=2 && COMMON==1 && G5==1 && KGPhase3==1' \
+    ${file} \
+    --threads ${task.cpus} \
+    -Oz -o ${key}.${chrom}.vcf.gz
 
-    plink --bfile ${bim.baseName} \
-        --extract ${ref}.${cohort}.variants.txt \
-        --make-bed \
-        --out ${ref}.${cohort}.selected
+    # Index
+    tabix ${key}.${chrom}.vcf.gz
+
+    # Create BED file
+    bcftools query -f '%CHROM\t%POS\t%ID\n' ${key}.${chrom}.vcf.gz > ${key}.${chrom}.txt
     """
 }

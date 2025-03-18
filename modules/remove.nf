@@ -7,13 +7,15 @@ process REMOVE {
     publishDir("${params.output_dir}/removed", mode: 'copy')
 
     input:
-    tuple val(cohort), val(type), val(chrom), env(n_vars),
-          path(vcf_in), path(index_in)
+    tuple val(cohort), val(type), val(chrom), val(chunk),
+          path(vcf_in), path(index_in),
+          env(n_vars)
 
     output:
-    tuple val(cohort), val(type), val(chrom), env(n_vars),
-          path("${cohort}.${type}.${chrom}.removed.vcf.gz"),
-          path("${cohort}.${type}.${chrom}.removed.vcf.gz.tbi")
+    tuple val(cohort), val(type), val(chrom), val(chunk),
+          path("${cohort}.${type}.${chrom}.${chunk}.removed.vcf.gz"),
+          path("${cohort}.${type}.${chrom}.${chunk}.removed.vcf.gz.tbi"),
+          env(n_vars)
      
     script:
     """
@@ -23,9 +25,9 @@ process REMOVE {
         -e '(REF="A" & ALT="T") || (REF="G" & ALT="C")' \
         ${vcf_in} \
         --threads ${task.cpu} \
-        -Oz -o ${cohort}.${type}.${chrom}.removed.vcf.gz
+        -Oz -o ${cohort}.${type}.${chrom}.${chunk}.removed.vcf.gz
     
-    tabix ${cohort}.${type}.${chrom}.removed.vcf.gz
-    n_vars=\$(bcftools index -n ${cohort}.${type}.${chrom}.removed.vcf.gz)
+    tabix ${cohort}.${type}.${chrom}.${chunk}.removed.vcf.gz
+    n_vars=\$(bcftools index -n ${cohort}.${type}.${chrom}.${chunk}.removed.vcf.gz)
     """
 }

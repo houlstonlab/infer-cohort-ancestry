@@ -7,7 +7,7 @@ process COMBINE {
     publishDir("${params.output_dir}/combined", mode: 'copy')
 
     input:
-    tuple val(cohort), val(type), val(chrom),
+    tuple val(cohort), val(type), val(chrom), val(chunk),
           path(bim), path(bed), path(fam), path(nosex),
           path(log), path(pop)
 

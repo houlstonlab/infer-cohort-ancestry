@@ -7,17 +7,18 @@ process PRUNE {
     publishDir("${params.output_dir}/pruned", mode: 'copy')
 
     input:
-    tuple val(cohort), val(type), val(chrom),
-          path(bim), path(bed), path(fam), path(nosex), path(log),
+    tuple val(cohort), val(type),
+          path(bim), path(bed), path(fam), path(nosex), path(log), path(pop),
           path(ld_regions)
           
     output:
-    tuple val(cohort), val(type), val(chrom),
-          path("${cohort}.${type}.${chrom}.prune.bim"),
-          path("${cohort}.${type}.${chrom}.prune.bed"),
-          path("${cohort}.${type}.${chrom}.prune.fam"),
-          path("${cohort}.${type}.${chrom}.prune.nosex"),
-          path("${cohort}.${type}.${chrom}.prune.log")
+    tuple val(cohort), val(type),
+          path("${cohort}.${type}.prune.bim"),
+          path("${cohort}.${type}.prune.bed"),
+          path("${cohort}.${type}.prune.fam"),
+          path("${cohort}.${type}.prune.nosex"),
+          path("${cohort}.${type}.prune.log"),
+          path(pop)
 
     script:
     """
@@ -32,10 +33,11 @@ process PRUNE {
         --extract plink_tmp.prune.in \
         --make-bed \
         --const-fid 0 \
-        --out ${cohort}.${type}.${chrom}.prune
+        --out ${cohort}.${type}.prune
     
     # Explicitly rename output files
-    mv plink_tmp.prune.in ${cohort}.${type}.${chrom}.prune.in
-    mv plink_tmp.prune.out ${cohort}.${type}.${chrom}.prune.out
+    mv plink_tmp.prune.log ${cohort}.${type}.prune.log
+    mv plink_tmp.prune.in  ${cohort}.${type}.prune.in
+    mv plink_tmp.prune.out ${cohort}.${type}.prune.out
     """
 }

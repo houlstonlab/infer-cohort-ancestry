@@ -7,16 +7,17 @@ process CONVERT {
     publishDir("${params.output_dir}/plinked", mode: 'copy')
 
     input:
-    tuple val(cohort), val(type), val(chrom), env(n_vars),
-          path(vcf_in), path(index_in)
+    tuple val(cohort), val(type), val(chrom), val(chunk),
+          path(vcf_in), path(index_in),
+          env(n_vars)
 
     output:
-    tuple val(cohort), val(type), val(chrom),
-          path("${cohort}.${type}.${chrom}.bim"),
-          path("${cohort}.${type}.${chrom}.bed"),
-          path("${cohort}.${type}.${chrom}.fam"),
-          path("${cohort}.${type}.${chrom}.nosex"),
-          path("${cohort}.${type}.${chrom}.log")
+    tuple val(cohort), val(type), val(chrom), val(chunk),
+          path("${cohort}.${type}.${chrom}.${chunk}.bim"),
+          path("${cohort}.${type}.${chrom}.${chunk}.bed"),
+          path("${cohort}.${type}.${chrom}.${chunk}.fam"),
+          path("${cohort}.${type}.${chrom}.${chunk}.nosex"),
+          path("${cohort}.${type}.${chrom}.${chunk}.log")
 
     script:
     """
@@ -28,6 +29,6 @@ process CONVERT {
         --const-fid 0 \
         --exclude tmp.exclude \
         --fill-missing-a2 \
-        --out ${cohort}.${type}.${chrom}
+        --out ${cohort}.${type}.${chrom}.${chunk}
     """
 }

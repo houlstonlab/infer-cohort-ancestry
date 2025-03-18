@@ -37,7 +37,6 @@ nextflow run houlstonlab/infer-cohort-ancestry \
     - `fasta`: assembly fasta file
     - `dbsnp`: dbsnp VCF file and index
     - `ld_regions`: bed file of genomic regions to exclude
-    - `snplist`: IDs of SNPs to use
 
 - Parameters
     - `AF`: allele frequency. Default is 0
@@ -59,14 +58,12 @@ nextflow run houlstonlab/infer-cohort-ancestry \
     - `prune`: prune study variants. Default is = true
     - `fix`: match reference allele to reference genome. Default is true
     - `remove`: remove ambigious calls. Default is true
-    - `update`: update variants IDs to dbsnp. Default is true
 
 ### Output
 
 - `cohorts/`  : subsets of the VCF files
 - `updated/`  : updated VCF files with variant IDs
 - `removed/`  : ambigious calls removed 
-- `updated/`  : updated alleles as in dbsnp
 - `fixed/`    : fixed reference allele
 - `pruned/`   : pruned variants
 - `combined/` : combined plink files

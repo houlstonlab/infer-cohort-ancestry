@@ -1,5 +1,5 @@
 process SUBSET {
-    tag "${cohort}:${type}:${chrom}"
+    tag "${cohort}:${type}"
 
     label 'simple'
     label 'bcftools'
@@ -7,30 +7,41 @@ process SUBSET {
     publishDir("${params.output_dir}/cohorts", mode: 'copy')
 
     input:
-    tuple val(cohort), val(type), val(size), 
+    tuple val(chrom), val(chunk), path(snps),
+          val(cohort), val(type), val(size), 
 		  path(vcf_in), path(index_in),
-          path(population),
-          val(chrom)
+          path(population)
 
     output:
-    tuple val(cohort), val(type), val(chrom), env(n_vars),
-          path("${cohort}.${type}.${chrom}.snps.vcf.gz"),
-          path("${cohort}.${type}.${chrom}.snps.vcf.gz.tbi")
+    tuple val(cohort), val(type), val(chrom), val(chunk),
+          path("${cohort}.${type}.${chrom}.${chunk}.snps.vcf.gz"),
+          path("${cohort}.${type}.${chrom}.${chunk}.snps.vcf.gz.tbi"),
+          env(n_vars)
           
- 
     script:
     """
     #!/bin/bash
+    # Compress and index the snps
+    bgzip -c ${snps} > snps.bed.gz
+    tabix -s1 -b2 -e2 snps.bed.gz
+
 	# Extract SNPs
     bcftools view \
         ${vcf_in} \
         -S <(awk '{ print \$2 }' ${population}) \
-        -r ${chrom} \
+        -R ${snps} \
         -i 'AC>0' \
-        -v snps -m2 -M2 \
+        -v snps -m2 -M2 | \
+    bcftools annotate \
+        -a snps.bed.gz \
+        -c CHROM,POS,ID \
         --threads ${task.cpu} \
-        -Oz -o ${cohort}.${type}.${chrom}.snps.vcf.gz
-    tabix ${cohort}.${type}.${chrom}.snps.vcf.gz
-    n_vars=\$(bcftools index -n ${cohort}.${type}.${chrom}.snps.vcf.gz)
+        -Oz -o ${cohort}.${type}.${chrom}.${chunk}.snps.vcf.gz
+    
+    # Index
+    tabix ${cohort}.${type}.${chrom}.${chunk}.snps.vcf.gz
+
+    # Count number of variants
+    n_vars=\$(bcftools index -n "${cohort}.${type}.${chrom}.${chunk}.snps.vcf.gz")
     """
 }

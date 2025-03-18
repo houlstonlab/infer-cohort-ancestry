@@ -20,6 +20,9 @@ cd test/
 # cp /data/reference-data/iGenomes/Homo_sapiens/GATK/GRCh38/Sequence/WholeGenomeFasta/Homo_sapiens_assembly38.fasta input/assembly38.fasta
 # cp /data/reference-data/iGenomes/Homo_sapiens/GATK/GRCh38/Sequence/WholeGenomeFasta/Homo_sapiens_assembly38.fasta.fai input/assembly38.fasta.fai 
 
+# TODO: create a subset of dbsnp
+# cp /data/reference-data/iGenomes/Homo_sapiens/GATK/GRCh38/Annotation/GATKBundle/dbsnp_146.hg38.vcf.gz{,.tbi} input/
+
 # Run nextflow
 module load Nextflow
 
