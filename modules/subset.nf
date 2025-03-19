@@ -32,10 +32,11 @@ process SUBSET {
         -R ${snps} \
         -i 'AC>0' \
         -v snps -m2 -M2 | \
+    bcftools norm -d any | \
     bcftools annotate \
         -a snps.bed.gz \
         -c CHROM,POS,ID \
-        --threads ${task.cpu} \
+        --threads ${task.cpus} \
         -Oz -o ${cohort}.${type}.${chrom}.${chunk}.snps.vcf.gz
     
     # Index

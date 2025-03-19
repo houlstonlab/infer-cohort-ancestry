@@ -29,7 +29,7 @@ process FILL {
     bcftools +setGT -- -t q -n 0 -i 'FMT/GQ < ${params.GQ} | FMT/DP < ${params.DP} | VAF < ${params.VAF}' | \
     bcftools +fill-tags -- -t all | \
     bcftools view -e 'MAF < ${params.MAF}' | \
- 	bcftools view -g het --threads ${task.cpu} -Oz -o ${cohort}.${type}.${chrom}.${chunk}.filled.vcf.gz
+ 	bcftools view -g het --threads ${task.cpus} -Oz -o ${cohort}.${type}.${chrom}.${chunk}.filled.vcf.gz
     tabix ${cohort}.${type}.${chrom}.${chunk}.filled.vcf.gz
     n_vars=\$(bcftools index -n ${cohort}.${type}.${chrom}.${chunk}.filled.vcf.gz)
 	"""

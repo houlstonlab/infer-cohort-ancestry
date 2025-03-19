@@ -1,5 +1,5 @@
 process PRUNE {
-    tag "${cohort}:${type}:${chrom}"
+    tag "${cohort}:${type}"
 
     label 'simple'
     label 'plink'

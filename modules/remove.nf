@@ -24,7 +24,7 @@ process REMOVE {
     bcftools view \
         -e '(REF="A" & ALT="T") || (REF="G" & ALT="C")' \
         ${vcf_in} \
-        --threads ${task.cpu} \
+        --threads ${task.cpus} \
         -Oz -o ${cohort}.${type}.${chrom}.${chunk}.removed.vcf.gz
     
     tabix ${cohort}.${type}.${chrom}.${chunk}.removed.vcf.gz

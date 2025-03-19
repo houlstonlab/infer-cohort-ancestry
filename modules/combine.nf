@@ -33,8 +33,15 @@ process COMBINE {
     echo "${fam.join('\n')}" > fam.txt
     paste -d ' ' bed.txt bim.txt fam.txt | sort -V > allfiles.txt
 
+    # Createa list of duplicate variants
+    cat ${bim} | cut -f 2 | sort > allvariants.txt
+    cat allvariants.txt | uniq -d > duplicates.txt
+    grep -vwFf duplicates.txt allvariants.txt > uniquevariants.txt
+
+    # Merge all files
     plink \
         --make-bed \
+        --extract uniquevariants.txt \
         --merge-list allfiles.txt \
         --out ${cohort}.${type}
     """
