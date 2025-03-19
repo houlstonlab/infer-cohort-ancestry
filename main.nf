@@ -68,7 +68,7 @@ workflow {
     // Fill the study SNPs
     // Along with the reference, convert and combine
     snps.cases
-        | ( params.fill && map{ it[1] } == 'cases' ? FILL : map {it} )
+        | ( params.fill ? FILL : map {it} )
         | filter { it.last().toInteger() > 0 }
         | concat(snps.references)
         | CONVERT
